@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>I Need A Social Life</title>
+	<%- partial('partials/headerFiles') %>
+
+</head>
+<body>
+
+	<div class="container">
+
+		<h1 style="text-align:center;"><span class="label label-danger"><%= data['name'] %></span></h1>
+		<div class="col-sm-2">
+			<div>
+				<% if(myName == undefined) { %>
+				<form class="form-signin" role="form" action=<%= "/signin?eventId="+data['mykey'] %> method="post">
+		        	<h4 class="form-signin-heading">Sign yoself In</h4>
+		        	<input type="text" class="form-control" name="username" placeholder="Name" required autofocus>
+		        	<div>No passwords. This site isn't secure at all.</div>
+		        	<button class="btn btn-sm btn-primary btn-block" type="submit">Sign in</button>
+		      	</form>
+		      	<% } else { %>
+		      		<h3>I AM "<%= myName %>"</h3>
+		      		<form action=<%= '/signout?eventId='+data['mykey'] %> method="post">
+		      			<button type="submit" class="btn btn-link">Sign meh out</button>
+		      		</form>
+		      	<% } %>
+	      	</div>
+	      	<div>
+		      	<div class="checkbox"><label>
+		      		<input type="checkbox" id="checkSched" checked=true>
+		 			Scheduling?
+		 		</label></div>
+		 		<div class="checkbox"><label>
+		      		<input type="checkbox" id="checkRides">
+		 			Rides?
+		 		</label></div>
+		 		<div class="checkbox"><label>
+		      		<input type="checkbox" id="checkPot">
+		 			Bringing Junk (Potluck)?
+		 		</label></div>
+	      	</div>
+	      	<div>
+	      		<h4>Who's Here?</h4>
+	      		<% for(var a=0; a<data['users'].length; a++) { %>
+	      		<p><%= data['users'][a]['name'] %></p>
+	      		<% } %>
+	      	</div>
+      	</div>
+      	<div class="col-sm-10">
+
+      		<div id="calendar">
+      			<% if(data['startTime'] == undefined) { %>
+      			<form id="calendarSetup" class="col-sm-5" onsubmit="return getCalData()" action=<%="/date?eventId="+data['mykey']%> method="post">
+					
+					<div class="row">
+						<div id="calendarGrid" class="cal-grid"></div>
+						<input name="availDates" id="availDates" value="" type="text" hidden="true">
+						<div class="col-sm-5">
+							<select class="form-control input-sm" name="startTime" form="calendarSetup">
+								<option value="0">Midnight</option>
+								<option value="1">1 AM</option>
+								<option value="2">2 AM</option>
+								<option value="3">3 AM</option>
+								<option value="4">4 AM</option>
+								<option value="5">5 AM</option>
+								<option value="6">6 AM</option>
+								<option value="7">7 AM</option>
+								<option value="8">8 AM</option>
+								<option value="9" selected="selected">9 AM</option>
+								<option value="10">10 AM</option>
+								<option value="11">11 AM</option>
+								<option value="12">Noon</option>
+								<option value="13">1 PM</option>
+								<option value="14">2 PM</option>
+								<option value="15">3 PM</option>
+								<option value="16">4 PM</option>
+								<option value="17">5 PM</option>
+								<option value="18">6 PM</option>
+								<option value="19">7 PM</option>
+								<option value="20">8 PM</option>
+								<option value="21">9 PM</option>
+								<option value="22">10 PM</option>
+								<option value="23" value="1">11 PM</option>
+								
+							</select>
+						</div>
+						<p class="col-sm-2" style="margin-top:5px;">to</p>
+						<div class="col-sm-5">
+							<select class="form-control input-sm" name="endTime" form="calendarSetup">
+								<option value="0">Midnight</option>
+								<option value="1">1 AM</option>
+								<option value="2">2 AM</option>
+								<option value="3">3 AM</option>
+								<option value="4">4 AM</option>
+								<option value="5">5 AM</option>
+								<option value="6">6 AM</option>
+								<option value="7">7 AM</option>
+								<option value="8">8 AM</option>
+								<option value="9">9 AM</option>
+								<option value="10">10 AM</option>
+								<option value="11">11 AM</option>
+								<option value="12">Noon</option>
+								<option value="13">1 PM</option>
+								<option value="14">2 PM</option>
+								<option value="15">3 PM</option>
+								<option value="16">4 PM</option>
+								<option value="17">5 PM</option>
+								<option value="18">6 PM</option>
+								<option value="19" selected="selected">7 PM</option>
+								<option value="20">8 PM</option>
+								<option value="21">9 PM</option>
+								<option value="22">10 PM</option>
+								<option value="23" value="1">11 PM</option>
+								
+							</select>
+						</div>
+					</div>
+					<input type="submit" class="btn btn-sm btn-primary" value="Go!"/>
+					
+				</form>
+				<% } else { %>
+
+
+
+				<!-- Button trigger modal -->
+				<% if(myName != undefined) { %>
+				<button class="btn btn-primary btn-primary" data-toggle="modal" data-target="#myModal">Add My Schedule</button>
+				<% } %>
+
+				<!-- Modal -->
+				<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				  <div class="modal-dialog modal-lg">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				        <h4 class="modal-title" id="myModalLabel">Me me me. Me too!</h4>
+				      </div>
+				      <div class="modal-body">
+				        
+						<form id="calendarSlot" data-owner=<%= myName %> data-eventid=<%=data['mykey']%>> <!-- Go find the submit function in jquery -->
+							<div id="slotGrid" class="cal-grid" style="overflow: auto;"></div>
+						</form>
+
+
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				        <button type="submit" class="btn btn-primary" form="calendarSlot">Save changes</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+
+
+
+				<form id="calendarSlot">
+					<div id="slotGrid" class="cal-grid"></div>
+				</form>
+
+				<div id="availGrid" class="cal-grid"></div>
+
+				<% } %>
+
+			</div>
+
+
+
+	      	<%= JSON.stringify(data) %>
+	      	<%= data['times'] %>
+	      	I AM <%= myName %>
+	      	
+      	</div>
+	</div>
+
+	<%- partial('partials/footerFiles') %>
+	
+	<% if(data['startTime'] == undefined) { %>
+	<script>var calendar = new Calendar(new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()));</script>
+	<% } else { %>
+
+
+	<script>
+		
+		var stringyTimes = <%- JSON.stringify(data['times']) %>;
+		var stringyDates = <%- JSON.stringify(data['availDates']) %>;
+		var stringyMeTime = [];
+
+		// Gotta find the current user's times to put in their personal calendar
+		// Must be in an array of one to fit what Slot accepts. I believe this to be inconvenient,
+		// however it is the most extensible.
+		for(time in stringyTimes) {
+			if(stringyTimes[time]['owner'] == "<%= myName %>") {
+				stringyMeTime.push(stringyTimes[time]);
+			}
+		}
+
+	</script>
+
+	<script>
+	 	var slot = new Slot(<%= data['startTime'] %>, <%= data['endTime'] %>, stringyDates, true, "slotGrid", stringyMeTime);
+	</script>
+
+	<script>
+		var display = new Slot(<%= data['startTime'] %>, <%= data['endTime'] %>, stringyDates, false, "availGrid", stringyTimes);
+	</script>
+
+	<% } %>
+</body>
+</html>
+

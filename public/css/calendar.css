@@ -1,0 +1,67 @@
+.cal-grid table, th, td {
+  color: #707070;
+  border: 1px solid #CCC;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top: 15px;
+ /* -webkit-transition: background-color 0.2s;
+  transition: background-color 0.2s;*/
+  font-size: 13px;
+  text-align: center;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.cal-grid {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.dateNum {
+  cursor: pointer;
+}
+
+.cal-grid .dateNum:hover {
+  background-color: #CCC;
+}
+
+.cal-grid .avail { /* Note avail and high are just placeholders now. 
+  The background-color here isn't where its getting its color */
+  background-color: #339933;
+  color: white;
+}
+
+.cal-grid .avail:hover {
+  background-color: #33CC33 !important; /* I'm terrible at CSS. 
+  This is to override the inline styling. */
+  cursor: pointer;
+}
+
+.cal-grid .high {
+  background-color: #FF00FF;
+  /*color: white;*/
+}
+
+.cal-grid .unhigh {
+  background-color: blue;
+}
+
+.slotCell {
+  height: 10px;
+}
+
+.slot-cell-head {
+  font-size: 10px;
+  border-style: none;
+}
+
+.slot-cell-head-text {
+  position: absolute;
+  top: -11px;
+  text-align: right;
+  width: 100%;
+
+
+}
