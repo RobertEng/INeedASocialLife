@@ -28,7 +28,7 @@
 	      	</div>
 	      	<div>
 		      	<div class="checkbox"><label>
-		      		<input type="checkbox" id="checkSched" checked=true>
+		      		<input type="checkbox" id="checkSched" checked=true onchange="toggleSched()">
 		 			Scheduling?
 		 		</label></div>
 		 		<div class="checkbox"><label>
@@ -47,7 +47,7 @@
 	      		<% } %>
 	      	</div>
       	</div>
-      	<div class="col-sm-10">
+      	<div class="col-sm-10" id="sectionSched">
 
       		<div id="calendar">
       			<% if(data['startTime'] == undefined) { %>
@@ -154,11 +154,11 @@
 
 
 
-				<form id="calendarSlot">
+				<!-- <form id="calendarSlot">
 					<div id="slotGrid" class="cal-grid"></div>
-				</form>
+				</form> -->
 
-				<div id="availGrid" class="cal-grid"></div>
+				<div id="availGrid" class="cal-grid" style="overflow: auto; padding-left: 0px;"></div>
 
 				<% } %>
 
@@ -166,12 +166,15 @@
 
 
 
-	      	<%= JSON.stringify(data) %>
-	      	<%= data['times'] %>
-	      	I AM <%= myName %>
+
 	      	
       	</div>
+      	<div class="col-sm-10" id="sectionRides">
+      	Rides
+      	</div>
 	</div>
+
+	<div id="dataMyKey" data="<%= data['mykey'] %>" style="display:none;"></div>
 
 	<%- partial('partials/footerFiles') %>
 	
@@ -206,6 +209,11 @@
 	</script>
 
 	<% } %>
+
+
+	
+
+	
 </body>
 </html>
 

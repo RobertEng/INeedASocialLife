@@ -8,3 +8,26 @@ var server = app.listen(app.get('port'), function() {
   debug('Express server listening on port ' + server.address().port);
   console.log('Express server listening on port ' + server.address().port);
 });
+
+var io = require("socket.io")(server);
+
+io.on('connection', function(socket) {
+	console.log("A user connected");
+	
+	socket.on("room", function(room) {
+		console.log("Joining room " + room);
+		socket.join(room);
+	});
+
+	socket.on("times", function(data) {
+		console.log("Times data recieved by socket");
+		console.log("The room is " + data['roomkey']);
+		// console.log("The times are " + data['data']);
+
+		io.to(data['roomkey']).emit("times", data['data']);
+
+	});
+	socket.on('disconnect', function(){
+	    console.log('user disconnected');
+	});
+});

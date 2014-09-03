@@ -1,3 +1,5 @@
+
+
 function Slot(startTime, endTime, availDates, interactive, target, times) {
   this.monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
                      'September', 'October', 'November', 'December'];
@@ -119,14 +121,16 @@ Slot.prototype.addSlotGrid = function(startTime, endTime, availDates, target) {
     // The label at the beginning of the row
     var rowHead = document.createElement("td");
     rowHead.setAttribute("class", "slot-cell-head");
+    rowHead.setAttribute("style", "position: absolute;");
     if(possMonth[0][i].getMinutes() == 0) { // Multiples of 1 hour. (Exclude multiples of 15 min)
       var label = document.createElement("div");
-      label.setAttribute("style", "position:relative; width:40px;");
+      label.setAttribute("style", "position:relative; width:40px; top: -10px;");
       var underLabel = document.createElement("div");
       underLabel.setAttribute("class", "slot-cell-head-text");
       underLabel.innerHTML = this.hourNames[possMonth[0][i].getHours()]
       label.appendChild(underLabel);
       rowHead.appendChild(label);
+
     }
 
     row.appendChild(rowHead);
@@ -160,13 +164,15 @@ Slot.prototype.addSlotGrid = function(startTime, endTime, availDates, target) {
 Slot.prototype.render = function(startTime, endTime, availDates, interactive, target, times) {
   var elem = this.addSlotGrid(startTime, endTime, availDates, target);
   this.elem = elem;
-  
+
   document.getElementById(target).appendChild(elem);
 
   if(interactive)
     this.addInteract(elem);
 
-  this.addTimes(elem, times);
+
+  this.setupTimes(elem, times);
+  this.addTimes(elem, interactive);
 
 
   
@@ -183,9 +189,10 @@ Slot.prototype.addInteract = function(elem) {
 
 };
 
-Slot.prototype.addTimes = function(elem, times) {
-  console.log("I'm adding times");
-  console.log(times);
+Slot.prototype.setupTimes = function(elem, times) {
+  // console.log("step 2");  
+  // console.log("I'm adding times");
+  // console.log(times);
   // console.log(elem);
   // console.log(times.length);
 
@@ -199,6 +206,8 @@ Slot.prototype.addTimes = function(elem, times) {
   // Gotta get them nice and sorted. Although, I think they start out sorted. Nice to have anyway.
   for(schedule in times) {
     times[schedule]['times'] = times[schedule]['times'].sort();
+    // console.log("step 2.1."+schedule);  
+
   }
 
   timeArr = [];
@@ -206,11 +215,12 @@ Slot.prototype.addTimes = function(elem, times) {
 
   // console.log("Much loopy was had");
 
-  var count = 0; // Just for debug purposes to stop endless while loop
+  // var count = 0; // Just for debug purposes to stop endless while loop
 
   // Keep going until there's only one array
-  while(times.length > 1 && count < 1000) {
-    count ++;
+  while(times.length > 1) {
+    // count ++;
+    // console.log(count);
     // console.log("loopy loopy I'm so loopy. times.length = " + times.length + " count = " + count);
 
 
@@ -250,9 +260,21 @@ Slot.prototype.addTimes = function(elem, times) {
     }
   }
 
+  // console.log("Before " + timeArr);
+
+
   // After looping, I'm left with one array. I need not look through to find the smallest value since theres nothing to compare it to.
   if(times.length > 0) {
+    // Gotta first take care of the corner case that the last guy's first time is the same as the second to last guy's last time. Yes, I am hardcoding this, there's no better way to do it.
+    if(timeArr.length > 0 && timeArr[timeArr.length - 1] == times[0]['times'][0]) {
+      userArr[userArr.length - 1].push(times[0]['owner']);
+      times[0]['times'].shift();
+    }
+
+    // Now for actually appending on to the rest of the times
     for(time in times[0]['times']) {
+      // console.log("step 2.3." + time);  
+
       timeArr.push(times[0]['times'][time]);
       var users = [];
       users.push(times[0]['owner']);
@@ -261,14 +283,27 @@ Slot.prototype.addTimes = function(elem, times) {
   }
 
 
+  this.timeArr = timeArr;
+  this.userArr = userArr;
 
   // console.log(timeArr);
   // console.log(userArr);
+
+  // console.log("step 3");  
+
+}
+
+
+Slot.prototype.addTimes = function(elem, interactive) {
+  // console.log("step 4");  
 
   // After the sorting, now I must somehow input it into the table. To do this.....
   // I find the first date of each column and see if the current time is in it.
   // If it is, I can go look through (or calculate) for the correct spot and color that to the correct shade.
   
+  var userArr = this.userArr;
+  var timeArr = this.timeArr;
+
   // Just a little information I need later. May change this later depending if I need it.
   // I must get the max number of users available on one day over all the days.
   var maxUsers = 0;
@@ -308,12 +343,38 @@ Slot.prototype.addTimes = function(elem, times) {
       // console.log("Morning = " + morning + " and Night = " + night);
       if(timeArr[time] >= morning && timeArr[time] < night) { // Found it!
         // console.log("I HATH FOUND IT AT " + morning + " and " + night);
-        var index = (timeArr[time] - morning)/900000 + 1;
-        // console.log("Col = " + e + " Row = " + index);
+        var index = (timeArr[time] - morning)/900000 + 1; // 900000 is milliseconds/15min
+        // console.log("Col = " + e + " Row = " + index + " timeArr = " + timeArr[time]);
+
+
+
+        // Must add avail class. The problem is I don't have addClass method from jquery.
+        // This is a pain, I must find a better solution later.
         elem.firstChild.childNodes[index].childNodes[e].className += " avail";
-        
+        // elem.firstChild.childNodes[index].childNodes[e].className = "slotCell avail";
+        // if(interactive)
+        //   elem.firstChild.childNodes[index].childNodes[e].className += " dateNum";
+
         // elem.firstChild.childNodes[index].childNodes[e].style += " background-color: "+colors[userArr[time].length]+";";
         elem.firstChild.childNodes[index].childNodes[e].style.backgroundColor = colors[userArr[time].length];
+
+        if(!interactive) {
+          elem.firstChild.childNodes[index].childNodes[e].setAttribute("data-toggle", "tooltip");
+          elem.firstChild.childNodes[index].childNodes[e].setAttribute("data-container", "body");
+          var userLine = "";
+          for(user in userArr[time]) {
+            userLine += userArr[time][user] + "\n";
+          }
+          // console.log("Uh oh");
+          // console.log(userLine);
+          // elem.firstChild.childNodes[index].childNodes[e].setAttribute("title", userArr[time]);
+          elem.firstChild.childNodes[index].childNodes[e].setAttribute("title", userLine);
+
+
+          // elem.firstChild.childNodes[index].childNodes[e].innerHTML = "moodle";
+
+          
+        }
 
         // console.log(elem.firstChild.childNodes[index].childNodes[e].style);
 
@@ -325,5 +386,32 @@ Slot.prototype.addTimes = function(elem, times) {
   }
   // console.log(elem.firstChild.childNodes[1].childNodes);
   // var table = document.getElementsByClassName("cal-table")[0];
+  // console.log("step 5");  
 
 };
+
+
+Slot.prototype.eraseTimes = function(elem) {
+  // Ugh. Need to also make the calendar blank before I fill it in I guess.
+  // As of whenever I wrote this, this function is only used for the display table
+  
+  console.log("Did I make it in here?");
+  // var timeArr = this.timeArr;
+
+  for(var row=1; row<elem.firstChild.childNodes.length; row++) {
+    for(var col=1; col<elem.firstChild.childNodes[1].childNodes.length; col++) {
+      
+      elem.firstChild.childNodes[row].childNodes[col].className = "slotCell";
+      elem.firstChild.childNodes[row].childNodes[col].style.backgroundColor = "white";
+      elem.firstChild.childNodes[row].childNodes[col].setAttribute("title","");
+      elem.firstChild.childNodes[row].childNodes[col].removeAttribute("data-toggle");
+      funThings(elem.firstChild.childNodes[row].childNodes[col]);
+      // elem.firstChild.childNodes[row].childNodes[col].removeAttribute("data-container");
+      // console.log("row = " + row + " col = " + col + " class = " + elem.firstChild.childNodes[row].childNodes[col].className);
+
+
+    }
+  }
+
+  console.log("Supposedly");
+}

@@ -190,15 +190,43 @@ $(document).ready(function() {
 				// console.log(JSON.stringify(data));
 				// console.log(display);
 				// var table = document.getElementsByClassName("cal-table")[0];
-				display.addTimes(display.elem, JSON.parse(data));
+				// console.log("step 1");
+				display.eraseTimes(display.elem);
+				display.setupTimes(display.elem, JSON.parse(data));
+				display.addTimes(display.elem, false);
+
+
+				var mykey = document.getElementById("dataMyKey").getAttribute("data");
+				socket.emit("times", {"data":data, "roomkey":mykey});
+				console.log("socket?");
+				
+
 			}
 		});
 
 	});
-	
+
+
+	$(".slotCell").mouseover(function() {
+		// console.log("oodles");
+		if(!$(this).hasClass("dateNum") && $(this).hasClass("avail")) {
+			$(this).tooltip('show');
+		}
+	});
+
+
+	function rmTip(elem) {
+		// console.log("ayyyyyyy");
+		$(elem).tooltip("destroy");
+	}
+	my_function = rmTip;
 });
 
+my_function = null;
 
+function funThings (elem) {
+	my_function(elem);
+}
 
 function getCalData() {
 	// Get calendar data
@@ -223,4 +251,11 @@ function getCalData() {
 }
 
 
-
+function toggleSched() {
+	var section = document.getElementById("sectionSched");
+	if(section.style.display != "none") {
+		section.style.display = "none";
+	} else {
+		section.style.display = "";
+	}
+}

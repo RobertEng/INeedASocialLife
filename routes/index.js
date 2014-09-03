@@ -168,7 +168,7 @@ router.post('/store', function(req, res) {
 				collection.findOne({mykey:eventId}, function(err, item) {
 					if(err) throw err;
 					// console.log("findOne item = "+item);
-					console.log("findOne item.times = "+JSON.stringify(item.times));
+					// console.log("findOne item.times = "+JSON.stringify(item.times));
 					// for(var a=0; a<item.times.length; a++) {
 					// 	console.log("findOne item.times[0] = "+item.times[a].owner+item.times[a].times);
 					// }
