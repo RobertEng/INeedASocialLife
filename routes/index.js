@@ -4,7 +4,7 @@ var router = express.Router();
 var MongoClient = require('mongodb').MongoClient;
 
 var collectionName = "test";
-var database = "mongodb://localhost:27017/exampleDB";
+var database = process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || "mongodb://localhost:27017/exampleDB";
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -15,8 +15,14 @@ router.get('/', function(req, res) {
 	var eventId = req.param("eventId");
 	console.log("eventId = " + req.param("eventId"));
 
+	var conn = true;
+
 	MongoClient.connect(database, function(err, db) {
-		if(err) throw err;
+		if(err) {
+			conn = false;
+			throw err;
+		} else {
+		
 		console.log("Connection to MongoDB");
 		var collection = db.collection(collectionName);
 
@@ -53,7 +59,14 @@ router.get('/', function(req, res) {
 				});
 			}
 		});
+
+		}
 	});
+	
+	// if(!conn)
+		// res.render('index');
+
+
 });
 
 
