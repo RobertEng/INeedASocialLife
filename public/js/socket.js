@@ -2,7 +2,8 @@
 if(document.getElementById("dataMyKey") != null) {
 	var mykey = document.getElementById("dataMyKey").getAttribute("data");
 	console.log(mykey);
-	var socket = io();
+	// var socket = io();
+	var socket = io.connect(window.location.hostname);
 
 	socket.on("connect", function() {
 		socket.emit("room", mykey);
