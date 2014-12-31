@@ -1,7 +1,11 @@
 var express = require('express');
 var router = express.Router();
 
+
 var MongoClient = require('mongodb').MongoClient;
+
+//mongolab uri
+var uri = 'mongodb://heroku_app32873704:pq9qtqn5i7bv5ohtdhn8kno0k2@ds049150.mongolab.com:49150/heroku_app32873704';
 
 var collectionName = "test";
 var database = process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || "mongodb://localhost:27017/exampleDB";
@@ -10,14 +14,16 @@ var database = process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || "mongodb:/
 router.get('/', function(req, res) {
 	console.log("in /");
 	
-	var junk;
+	var junk = "";
 
 	var eventId = req.param("eventId");
 	console.log("eventId = " + req.param("eventId"));
 
 	var conn = true;
 
-	MongoClient.connect(database, function(err, db) {
+	// MongoClient.connect(database, function(err, db) {
+	MongoClient.connect(uri, function(err, db) {
+
 		if(err) {
 			conn = false;
 			throw err;
