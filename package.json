@@ -11,6 +11,7 @@
     "debug": "~0.7.4",
     "ejs": "^1.0.0",
     "express": "~4.2.0",
+    "indexof": "0.0.1",
     "morgan": "~1.0.0",
     "socket.io": "^1.0.6",
     "static-favicon": "~1.0.0"
