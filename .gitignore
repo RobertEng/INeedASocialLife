@@ -1,3 +1,5 @@
-.elasticbeanstalk/
-node_modules
-./data
+.elasticbeanstalk/
+node_modules/
+
+data
+/
