@@ -8,7 +8,7 @@ var MongoClient = require('mongodb').MongoClient;
 var uri = 'mongodb://heroku_app32873704:pq9qtqn5i7bv5ohtdhn8kno0k2@ds049150.mongolab.com:49150/heroku_app32873704';
 
 var collectionName = "test";
-var database = process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || "mongodb://localhost:27017/exampleDB";
+var database = process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || "mongodb://localhost:27017/exampleDB" || uri;
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -26,7 +26,12 @@ router.get('/', function(req, res) {
 
 		if(err) {
 			conn = false;
-			throw err;
+			res.render('error', {
+	            message: "Are you sure you have internet?",
+	            error: err
+	        });
+			// throw err;
+
 		} else {
 		
 		console.log("Connection to MongoDB");
@@ -38,15 +43,15 @@ router.get('/', function(req, res) {
 		collection.find().toArray(function(err, items) {
 			if(err) throw err;
 			junk = "junk: ";
-			for(var a=0; a<items.length; a++)
-				junk += "mykey=" + items[a]['mykey'] + 
-						" name=" + items[a]['name'] + 
-						" users = " + items[a]['users'] + 
-						" startTime = " + items[a]['startTime'] +
-						" endTime = " + items[a]['endTime'] +
-						"availDates = " + items[a]['availDates'] +
-						"times = " + items[a]['times'] +
-						"..........";
+			// for(var a=0; a<items.length; a++)
+				// junk += "mykey=" + items[a]['mykey'] + 
+				// 		" name=" + items[a]['name'] + 
+				// 		" users = " + items[a]['users'] + 
+				// 		" startTime = " + items[a]['startTime'] +
+				// 		" endTime = " + items[a]['endTime'] +
+				// 		"availDates = " + items[a]['availDates'] +
+				// 		"times = " + items[a]['times'] +
+				// 		"..........";
 
 
 			if(eventId == undefined) { // On the home page
